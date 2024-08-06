@@ -1,4 +1,4 @@
-GET http://localhost:8000/weather?cep=99999999 HTTP/1.1
+GET http://localhost:8000/weather?cep=011530011 HTTP/1.1
 Host: localhost:8000
 Content-Type: application/json
 

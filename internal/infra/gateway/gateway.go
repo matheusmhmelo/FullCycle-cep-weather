@@ -7,7 +7,10 @@ import (
 	"net/url"
 )
 
-var ErrorInvalidCEP = errors.New("invalid zipcode")
+var (
+	ErrorInvalidCEP  = errors.New("invalid zipcode")
+	ErrorNotFoundCEP = errors.New("can not find zipcode")
+)
 
 var getFunc = http.Get
 
@@ -48,7 +51,7 @@ func (w *weatherGatewayImpl) ValidateLocation(cep string) error {
 		return err
 	}
 	if resp.StatusCode == http.StatusBadRequest {
-		return ErrorInvalidCEP
+		return ErrorNotFoundCEP
 	}
 
 	var content cepResponse
@@ -58,7 +61,7 @@ func (w *weatherGatewayImpl) ValidateLocation(cep string) error {
 	}
 
 	if content.Error != "" {
-		return ErrorInvalidCEP
+		return ErrorNotFoundCEP
 	}
 	w.location = content.Location
 	return nil

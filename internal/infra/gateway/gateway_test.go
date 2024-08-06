@@ -25,6 +25,12 @@ func TestWeatherGatewayImpl_ValidateLocation(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, "City", gt.location)
 	})
+	t.Run("empty cep", func(t *testing.T) {
+		gt := &weatherGatewayImpl{}
+		err := gt.ValidateLocation("")
+		require.Error(t, err)
+		require.ErrorIs(t, err, ErrorInvalidCEP)
+	})
 	t.Run("response error", func(t *testing.T) {
 		getFunc = func(_ string) (resp *http.Response, err error) {
 			return &http.Response{
@@ -39,7 +45,7 @@ func TestWeatherGatewayImpl_ValidateLocation(t *testing.T) {
 		gt := &weatherGatewayImpl{}
 		err := gt.ValidateLocation("99999999")
 		require.Error(t, err)
-		require.ErrorIs(t, err, ErrorInvalidCEP)
+		require.ErrorIs(t, err, ErrorNotFoundCEP)
 	})
 }
 

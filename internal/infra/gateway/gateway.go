@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"net/url"
 )
 
 var ErrorInvalidCEP = errors.New("invalid zipcode")
@@ -64,7 +65,17 @@ func (w *weatherGatewayImpl) ValidateLocation(cep string) error {
 }
 
 func (w *weatherGatewayImpl) GetWeather() (float64, error) {
-	resp, err := getFunc("http://api.weatherapi.com/v1/current.json?key=" + w.apiKey + "&q=" + w.location)
+	u, err := url.Parse("http://api.weatherapi.com/v1/current.json")
+	if err != nil {
+		return 0, err
+	}
+
+	query := url.Values{}
+	query.Set("key", w.apiKey)
+	query.Set("q", w.location)
+	u.RawQuery = query.Encode()
+
+	resp, err := getFunc(u.String())
 	if err != nil {
 		return 0, err
 	}
